@@ -20,13 +20,18 @@ body {
     <h1>Jogo Pong e Javascript (Alura)</h1>    
 </body>
 <script>
-    function setup() {
+
+let xBolinha = 100;
+let yBolinha = 200;
+let diametroBolinha = 22;
+
+function setup() {
     createCanvas(700, 500);
 }
 
 function draw() {
     background(0);
-    circle(0, 0, 50);
+    circle(xBolinha, yBolinha, diametroBolinha);
 }
 </script>
 </html>
