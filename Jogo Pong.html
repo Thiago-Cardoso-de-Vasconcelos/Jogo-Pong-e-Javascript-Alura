@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/p5@0.10.2/lib/p5.min.js"></script>
+    <script src="p5.min.js"></script>
+    <script src="p5.collide2d.js"></script>
     <title>Jogo Pong e Javascript (Alura)</title>
 </head>
 <style>
@@ -15,23 +16,143 @@ body {
     flex-direction: column;
     margin: 0.7% 25%;
     background: rgb(24, 24, 24);
+
 } </style>
 <body>
-    <h1>Jogo Pong e Javascript (Alura)</h1>    
+    <h1>Jogo Pong (Alura) com a Biblioteca P5.js</h1>
+    <audio src="/ponto.mp3" id="ponto"></audio> 
+    <audio src="/raquetada.mp3" id="raquetada"></audio>  
+    <audio src="/trilha.mp3" id="trilha"></audio>   
 </body>
 <script>
 
-let xBolinha = 100;
-let yBolinha = 200;
-let diametroBolinha = 22;
+let xBolinha = 350;
+let yBolinha = 250;
+let diametroBolinha = 25;
+
+let velocidadeXBolinha = 6;
+let velocidadeYBolinha = 6;
+let raio = diametroBolinha / 2;
+
+
+let xRaquete = 5;
+let yRaquete = 205;
+let comprimentoRaquete = 10;
+let alturaRaquete = 90;
+
+let xRaqueteOponente = 685;
+let yRaqueteOponente = 205;
+let velocidadeYOponente;
+
+let colidiu = false;
+
+
+let meusPontos = 100;
+let pontosDoOponetn = 0;
+
 
 function setup() {
     createCanvas(700, 500);
+      
 }
 
 function draw() {
+    
     background(0);
-    circle(xBolinha, yBolinha, diametroBolinha);
+    mostraBolina();
+    movimentaBolina();
+    verificaColisaoBorda();
+    mostraRaquete(xRaquete, yRaquete);
+    mostraRaquete(xRaqueteOponente, yRaqueteOponente);
+    movimentaMinhaRaquete();
+    // verificaColisaoRaquete();
+   
+    movimentaRaqueteOponente();
+    verificaColisaoRaquete(xRaquete,yRaquete);
+    verificaColisaoRaquete(xRaqueteOponente,yRaqueteOponente);
+    incluiPlacar();
+    marcaPonto();
+   
 }
+
+function mostraBolina(){
+    circle(xBolinha, yBolinha, diametroBolinha);
+    
+}
+
+function movimentaBolina(){
+    xBolinha += velocidadeXBolinha;
+    yBolinha += velocidadeYBolinha;
+}
+
+function verificaColisaoBorda(){
+    if(xBolinha+raio > width || xBolinha-raio < 0){
+       velocidadeXBolinha *= -1;
+    }
+    if(yBolinha+raio > height || yBolinha-raio < 0){
+        velocidadeYBolinha *= -1; 
+    }
+}
+
+function mostraRaquete(x,y){
+    rect( x, y, comprimentoRaquete, alturaRaquete);
+}
+
+function movimentaMinhaRaquete(){
+  if(keyIsDown(UP_ARROW) &&  yRaquete > 0){
+    yRaquete -= 15;
+  }
+  if(keyIsDown(DOWN_ARROW) &&  yRaquete < 410){
+    yRaquete += 15;
+  }
+}
+
+// function verificaColisaoRaquete(){
+//     if (xBolinha - raio < xRaquete + comprimentoRaquete
+//     && yBolinha - raio < yRaquete + alturaRaquete
+//     && yBolinha + raio > yRaquete){
+//         velocidadeXBolinha *= -1;
+//     }
+// }
+
+function  verificaColisaoRaquete(x,y){
+    colidiu = collideRectCircle(x,y,comprimentoRaquete, alturaRaquete, xBolinha, yBolinha, raio);
+
+    if(colidiu){
+        velocidadeXBolinha *= -1;
+    }
+    
+}
+
+function movimentaRaqueteOponente(){
+    velocidadeYOponente = yBolinha - yRaqueteOponente - comprimentoRaquete / 2 - 40;
+    yRaqueteOponente += velocidadeYOponente
+}
+
+function incluiPlacar(){
+    stroke(255);
+    textAlign(CENTER);
+    textSize(20);
+    fill(color (255,140,0));
+    rect(176, 10, 50,30);
+    fill(255);    
+    text(meusPontos, 200, 32);
+    
+    fill(color (255,140,0));
+    rect(476, 10, 50,30);
+    fill(255); 
+    text(pontosDoOponetn, 500, 32);
+}
+
+function marcaPonto(){
+    if(xBolinha > 690){
+        meusPontos +=1;
+    }
+    if(xBolinha < 10){
+        pontosDoOponetn +=1;
+    }
+}
+
+
 </script>
 </html>
